@@ -31,14 +31,25 @@ jobs:
       libs: ${{ steps.libs.outputs.libs }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
       - id: libs
-        run: echo "libs=$(go run ./cmd/libctl list | jq -Rnc '[inputs]')" >> "$GITHUB_OUTPUT"
+        run: |
+          case "${{ github.event_name }}" in
+            pull_request) base="origin/${{ github.base_ref }}" ;;
+            push) base="${{ github.event.before }}" ;;
+            *) base="" ;;
+          esac
+          # First push of a branch has an all-zero "before".
+          [[ "$base" =~ ^0+$ ]] && base=""
+          echo "libs=$(scripts/changed-libs.sh "$base" | jq -Rnc '[inputs | select(length > 0)]')" >> "$GITHUB_OUTPUT"
 
   generate:
     needs: [test, matrix]
+    if: needs.matrix.outputs.libs != '[]'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
