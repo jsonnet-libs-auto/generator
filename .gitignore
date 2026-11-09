@@ -16,3 +16,6 @@
 
 # Never commit deploy keys.
 id_rsa
+
+# bin/gen-local build output
+/.bin/

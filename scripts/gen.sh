@@ -2,21 +2,24 @@
 set -euo pipefail
 
 DIRNAME=$(realpath "$(dirname "$0")")
+# Repo root holding jsonnet/ and LICENSE: the image flattens everything into
+# /app, so it defaults to this script's dir; bin/gen-local sets it on the host.
+GEN_ROOT=${GEN_ROOT:-${DIRNAME}}
 
 INPUT_DIR="$1"
 
-jsonnet -c -m "${INPUT_DIR}" -J . -S "${INPUT_DIR}/config.jsonnet"
+jsonnet -c -m "${INPUT_DIR}" -J "${GEN_ROOT}" -S "${INPUT_DIR}/config.jsonnet"
 
 CONFIG_FILE="${INPUT_DIR}/config.yml"
 
-REPO=$(yq2 e '.repository' - < "${CONFIG_FILE}")
+REPO=$(yq e '.repository' - < "${CONFIG_FILE}")
 
 OUTPUT_DIR="$2/${REPO}"
 
-if [ "${GEN_COMMIT}" != "true" ]; then
+if [ "${GEN_COMMIT:-false}" != "true" ]; then
     mkdir -p "${OUTPUT_DIR}"
 else
-    ./configure_github_ssh.sh "${DIRNAME}"
+    "${DIRNAME}/configure_github_ssh.sh" "${DIRNAME}"
     export GIT_SSH_COMMAND="ssh -F '${DIRNAME}/ssh/config'"
     git clone --depth 1 "ssh://git@${REPO}" "${OUTPUT_DIR}"
 
@@ -44,10 +47,10 @@ cp -r "${INPUT_DIR}/skel"/* "${OUTPUT_DIR}"
 
 k8s-gen -o "${OUTPUT_DIR}" -c "${CONFIG_FILE}"
 
-./docs.sh "${INPUT_DIR}" "${OUTPUT_DIR}"
+"${DIRNAME}/docs.sh" "${INPUT_DIR}" "${OUTPUT_DIR}"
 
 
-if [ "${GEN_COMMIT}" != "true" ]; then
+if [ "${GEN_COMMIT:-false}" != "true" ]; then
     ls -lah "${OUTPUT_DIR}"
 else
     pushd "${OUTPUT_DIR}"

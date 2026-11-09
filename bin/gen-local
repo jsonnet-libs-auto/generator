@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Usage: bin/gen-local <lib>...
+# Runs scripts/gen.sh on the host, without the generator image. Needs go and
+# yq on PATH; k8s-gen, docsonnet and jsonnet are built from this module so
+# their versions match the image.
+set -euo pipefail
+
+ROOT=$(realpath "$(dirname "$0")/..")
+BIN="${ROOT}/.bin"
+
+mkdir -p "${BIN}"
+go build -C "${ROOT}" -o "${BIN}/k8s-gen" .
+go build -C "${ROOT}" -o "${BIN}/docsonnet" github.com/jsonnet-libs/docsonnet
+go build -C "${ROOT}" -o "${BIN}/jsonnet" github.com/google/go-jsonnet/cmd/jsonnet
+
+export PATH="${BIN}:${PATH}"
+export GEN_ROOT="${ROOT}"
+
+for lib in "$@"; do
+    "${ROOT}/scripts/gen.sh" "${ROOT}/libs/${lib}" "${OUTPUT_DIR:-${ROOT}/gen}"
+done
