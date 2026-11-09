@@ -3,9 +3,16 @@
 /artifacts/
 /vendor/
 
+# k8s-gen binary
+/k8s
+/k8s-gen
+
 # Rendered per-lib config (from libs/<name>/config.jsonnet)
 /libs/*/config.yml
 /libs/*/skel/
 
 /tf/.terraform/
 /tf/*.tfplan
+
+# Never commit deploy keys.
+id_rsa
