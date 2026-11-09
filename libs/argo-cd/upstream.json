@@ -6,10 +6,7 @@
     "tagPattern": "^v(\\d+)\\.(\\d+)\\.(\\d+)$"
   },
   "policy": {
-    "minors": 5,
-    "keep": [
-      "3.2"
-    ]
+    "minors": 5
   },
   "versions": [
     {

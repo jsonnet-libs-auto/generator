@@ -6,10 +6,7 @@
     "tagPattern": "^v(\\d+)\\.(\\d+)\\.(\\d+)$"
   },
   "policy": {
-    "minors": 5,
-    "keep": [
-      "1.94"
-    ]
+    "minors": 5
   },
   "versions": [
     {
@@ -36,11 +33,6 @@
       "output": "1.96",
       "tag": "v1.96.5",
       "version": "1.96.5"
-    },
-    {
-      "output": "1.94",
-      "tag": "v1.94.2",
-      "version": "1.94.2"
     }
   ]
 }

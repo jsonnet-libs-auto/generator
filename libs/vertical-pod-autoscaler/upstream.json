@@ -6,10 +6,7 @@
     "tagPattern": "^vertical-pod-autoscaler-(\\d+)\\.(\\d+)\\.(\\d+)$"
   },
   "policy": {
-    "minors": 5,
-    "keep": [
-      "1.0"
-    ]
+    "minors": 5
   },
   "versions": [
     {
@@ -36,11 +33,6 @@
       "output": "1.4",
       "tag": "vertical-pod-autoscaler-1.4.2",
       "version": "1.4.2"
-    },
-    {
-      "output": "1.0",
-      "tag": "vertical-pod-autoscaler-1.0.0",
-      "version": "1.0.0"
     }
   ]
 }

@@ -7,9 +7,6 @@
   },
   "policy": {
     "minors": 5,
-    "keep": [
-      "0.14"
-    ],
     "since": "0.13"
   },
   "versions": [
