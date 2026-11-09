@@ -1,0 +1,38 @@
+{
+  "enabled": true,
+  "source": {
+    "kind": "git-tags",
+    "repo": "https://github.com/kubernetes/kubernetes",
+    "tagPattern": "^v(\\d+)\\.(\\d+)\\.(\\d+)$"
+  },
+  "policy": {
+    "minors": 5
+  },
+  "versions": [
+    {
+      "output": "1.37",
+      "tag": "v1.37.2",
+      "version": "1.37.2"
+    },
+    {
+      "output": "1.36",
+      "tag": "v1.36.6",
+      "version": "1.36.6"
+    },
+    {
+      "output": "1.35",
+      "tag": "v1.35.10",
+      "version": "1.35.10"
+    },
+    {
+      "output": "1.34",
+      "tag": "v1.34.13",
+      "version": "1.34.13"
+    },
+    {
+      "output": "1.33",
+      "tag": "v1.33.13",
+      "version": "1.33.13"
+    }
+  ]
+}

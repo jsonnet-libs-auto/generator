@@ -1,0 +1,38 @@
+{
+  "enabled": true,
+  "source": {
+    "kind": "git-tags",
+    "repo": "https://github.com/cert-manager/cert-manager",
+    "tagPattern": "^v(\\d+)\\.(\\d+)\\.(\\d+)$"
+  },
+  "policy": {
+    "minors": 5
+  },
+  "versions": [
+    {
+      "output": "1.21",
+      "tag": "v1.21.3",
+      "version": "1.21.3"
+    },
+    {
+      "output": "1.20",
+      "tag": "v1.20.5",
+      "version": "1.20.5"
+    },
+    {
+      "output": "1.19",
+      "tag": "v1.19.6",
+      "version": "1.19.6"
+    },
+    {
+      "output": "1.18",
+      "tag": "v1.18.6",
+      "version": "1.18.6"
+    },
+    {
+      "output": "1.17",
+      "tag": "v1.17.4",
+      "version": "1.17.4"
+    }
+  ]
+}

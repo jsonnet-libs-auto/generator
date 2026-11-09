@@ -1,35 +1,30 @@
 local config = import 'jsonnet/config.jsonnet';
-local versions = [
-  '1.37',
-  '1.36',
-  '1.35',
-  '1.34',
-];
+local upstream = import 'upstream.json';
+local outputs = [v.output for v in upstream.versions];
 
 config.new(
   name='k8s',
   specs=[
     {
-      output: version,
-      openapi: 'https://raw.githubusercontent.com/kubernetes/kubernetes/release-' + version + '/api/openapi-spec/swagger.json',
+      output: v.output,
+      openapi: 'https://raw.githubusercontent.com/kubernetes/kubernetes/%s/api/openapi-spec/swagger.json' % v.tag,
       prefix: '^io\\.k8s\\.(api|(kube-aggregator|apimachinery)\\.pkg\\.apis)\\..*',
       patchDir: 'custom/core',
-      extensionsDir: 'extensions/core',
       localName: 'k',
-      description: 'Generated Jsonnet library for Kubernetes v' + version,
+      description: 'Generated Jsonnet library for Kubernetes v' + v.output,
     }
-    for version in versions
+    for v in upstream.versions
   ]
 )
 + {
   'skel/README.md': (importstr './README_root.md.tmpl') % {
-    version: versions[0],
+    version: outputs[0],
   },
 
   'skel/docs/README.md': (importstr './README_docs.md.tmpl') % {
     pages: std.join('\n', [
       '- [v%(version)s](%(version)s/README.md)' % { version: version }
-      for version in versions
+      for version in outputs
     ]),
   },
 }

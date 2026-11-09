@@ -1,0 +1,46 @@
+{
+  "enabled": true,
+  "source": {
+    "kind": "git-tags",
+    "repo": "https://github.com/external-secrets/external-secrets",
+    "tagPattern": "^v(\\d+)\\.(\\d+)\\.(\\d+)$"
+  },
+  "policy": {
+    "minors": 5,
+    "keep": [
+      "2.5"
+    ]
+  },
+  "versions": [
+    {
+      "output": "2.14",
+      "tag": "v2.14.0",
+      "version": "2.14.0"
+    },
+    {
+      "output": "2.13",
+      "tag": "v2.13.0",
+      "version": "2.13.0"
+    },
+    {
+      "output": "2.12",
+      "tag": "v2.12.0",
+      "version": "2.12.0"
+    },
+    {
+      "output": "2.11",
+      "tag": "v2.11.0",
+      "version": "2.11.0"
+    },
+    {
+      "output": "2.10",
+      "tag": "v2.10.0",
+      "version": "2.10.0"
+    },
+    {
+      "output": "2.5",
+      "tag": "v2.5.0",
+      "version": "2.5.0"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "enabled": true,
+  "source": {
+    "kind": "git-tags",
+    "repo": "https://github.com/prometheus-operator/prometheus-operator",
+    "tagPattern": "^v(\\d+)\\.(\\d+)\\.(\\d+)$"
+  },
+  "policy": {
+    "minors": 5
+  },
+  "versions": [
+    {
+      "output": "0.95",
+      "tag": "v0.95.1",
+      "version": "0.95.1"
+    },
+    {
+      "output": "0.94",
+      "tag": "v0.94.2",
+      "version": "0.94.2"
+    },
+    {
+      "output": "0.93",
+      "tag": "v0.93.1",
+      "version": "0.93.1"
+    },
+    {
+      "output": "0.92",
+      "tag": "v0.92.1",
+      "version": "0.92.1"
+    },
+    {
+      "output": "0.91",
+      "tag": "v0.91.0",
+      "version": "0.91.0"
+    }
+  ]
+}

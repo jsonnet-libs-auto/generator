@@ -1,18 +1,20 @@
 local config = import 'jsonnet/config.jsonnet';
+local semver = import 'jsonnet/semver.libsonnet';
+local upstream = import 'upstream.json';
 
-local versions = [
-  { version: '0.13', tag: '0.13.6' },
-];
+local crdPath(v) =
+  if semver.atLeast(v.version, '0.18') then 'config/crd/standard/dnsendpoints.externaldns.k8s.io.yaml'
+  else 'docs/contributing/crd-source/crd-manifest.yaml';
 
 config.new(
   name='external-dns',
   specs=[
     {
-      output: v.version,
+      output: v.output,
       prefix: '^io\\.k8s\\.externaldns\\..*',
-      crds: ['https://raw.githubusercontent.com/kubernetes-sigs/external-dns/v%s/docs/contributing/crd-source/crd-manifest.yaml' % v.tag],
+      crds: ['https://raw.githubusercontent.com/kubernetes-sigs/external-dns/%s/%s' % [v.tag, crdPath(v)]],
       localName: 'external_dns',
     }
-    for v in versions
+    for v in upstream.versions
   ]
 )

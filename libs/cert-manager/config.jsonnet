@@ -1,19 +1,15 @@
 local config = import 'jsonnet/config.jsonnet';
-local versions = [
-  { version: '1.21', tag: 'v1.21.0' },
-  { version: '1.20', tag: 'v1.20.3' },
-  { version: '1.19', tag: 'v1.19.1' },
-];
+local upstream = import 'upstream.json';
 
 config.new(
   name='cert-manager',
   specs=[
     {
-      output: v.version,
+      output: v.output,
       prefix: '^io\\.cert-manager\\..*',
-      crds: ['https://github.com/cert-manager/cert-manager/releases/download/' + v.tag + '/cert-manager.crds.yaml'],
+      crds: ['https://github.com/cert-manager/cert-manager/releases/download/%s/cert-manager.crds.yaml' % v.tag],
       localName: 'cert_manager',
     }
-    for v in versions
+    for v in upstream.versions
   ]
 )

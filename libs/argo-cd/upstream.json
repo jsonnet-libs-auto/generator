@@ -1,0 +1,41 @@
+{
+  "enabled": true,
+  "source": {
+    "kind": "git-tags",
+    "repo": "https://github.com/argoproj/argo-cd",
+    "tagPattern": "^v(\\d+)\\.(\\d+)\\.(\\d+)$"
+  },
+  "policy": {
+    "minors": 5,
+    "keep": [
+      "3.2"
+    ]
+  },
+  "versions": [
+    {
+      "output": "3.6",
+      "tag": "v3.6.1",
+      "version": "3.6.1"
+    },
+    {
+      "output": "3.5",
+      "tag": "v3.5.7",
+      "version": "3.5.7"
+    },
+    {
+      "output": "3.4",
+      "tag": "v3.4.13",
+      "version": "3.4.13"
+    },
+    {
+      "output": "3.3",
+      "tag": "v3.3.19",
+      "version": "3.3.19"
+    },
+    {
+      "output": "3.2",
+      "tag": "v3.2.12",
+      "version": "3.2.12"
+    }
+  ]
+}

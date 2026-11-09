@@ -1,19 +1,15 @@
 local config = import 'jsonnet/config.jsonnet';
-local versions = [
-  'v1.5.9',
-  'v1.6.5',
-  'v1.7.1',
-];
+local upstream = import 'upstream.json';
 
 config.new(
   name='envoy-gateway',
   specs=[
     {
-      output: version,
+      output: v.output,
       prefix: '^io\\.envoyproxy\\.gateway\\..*',
-      crds: ['https://github.com/envoyproxy/gateway/releases/download/%s/install.yaml' % version],
+      crds: ['https://github.com/envoyproxy/gateway/releases/download/%s/install.yaml' % v.tag],
       localName: 'envoy-gateway',
     }
-    for version in versions
+    for v in upstream.versions
   ]
 )

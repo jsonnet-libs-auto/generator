@@ -1,0 +1,41 @@
+{
+  "enabled": true,
+  "source": {
+    "kind": "git-tags",
+    "repo": "https://github.com/envoyproxy/gateway",
+    "tagPattern": "^v(\\d+)\\.(\\d+)\\.(\\d+)$"
+  },
+  "policy": {
+    "minors": 5,
+    "keep": [
+      "1.7"
+    ]
+  },
+  "versions": [
+    {
+      "output": "1.10",
+      "tag": "v1.10.0",
+      "version": "1.10.0"
+    },
+    {
+      "output": "1.9",
+      "tag": "v1.9.3",
+      "version": "1.9.3"
+    },
+    {
+      "output": "1.8",
+      "tag": "v1.8.6",
+      "version": "1.8.6"
+    },
+    {
+      "output": "1.7",
+      "tag": "v1.7.5",
+      "version": "1.7.5"
+    },
+    {
+      "output": "1.6",
+      "tag": "v1.6.7",
+      "version": "1.6.7"
+    }
+  ]
+}

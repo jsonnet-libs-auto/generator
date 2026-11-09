@@ -1,62 +1,15 @@
-// libs/traefik/config.jsonnet
-
 local config = import 'jsonnet/config.jsonnet';
-local versions = [
-  { version: '3.6.10', chartTag: 'v39.0.5' },
-  { version: '2.11.2', chartTag: 'v27.0.2' },
-];
+local upstream = import 'upstream.json';
 
 config.new(
   name='traefik',
-
   specs=[
     {
-      local url = 'https://raw.githubusercontent.com/traefik/traefik-helm-chart/%s/traefik/crds' % v.chartTag,
-
-      output: v.version,
+      output: v.output,
       prefix: '^io\\.traefik\\..*',
-
-      crds:
-        if std.startsWith(v.version, '3') then
-          [
-            '%s/gateway-standard-install.yaml' % url,
-            '%s/hub.traefik.io_accesscontrolpolicies.yaml' % url,
-            '%s/hub.traefik.io_aiservices.yaml' % url,
-            '%s/hub.traefik.io_apiaccesses.yaml' % url,
-            '%s/hub.traefik.io_apibundles.yaml' % url,
-            '%s/hub.traefik.io_apicatalogitems.yaml' % url,
-            '%s/hub.traefik.io_apiplans.yaml' % url,
-            '%s/hub.traefik.io_apiportals.yaml' % url,
-            '%s/hub.traefik.io_apiratelimits.yaml' % url,
-            '%s/hub.traefik.io_apis.yaml' % url,
-            '%s/hub.traefik.io_apiversions.yaml' % url,
-            '%s/hub.traefik.io_managedsubscriptions.yaml' % url,
-            '%s/traefik.io_ingressroutes.yaml' % url,
-            '%s/traefik.io_ingressroutetcps.yaml' % url,
-            '%s/traefik.io_ingressrouteudps.yaml' % url,
-            '%s/traefik.io_middlewares.yaml' % url,
-            '%s/traefik.io_middlewaretcps.yaml' % url,
-            '%s/traefik.io_serverstransports.yaml' % url,
-            '%s/traefik.io_serverstransporttcps.yaml' % url,
-            '%s/traefik.io_tlsoptions.yaml' % url,
-            '%s/traefik.io_tlsstores.yaml' % url,
-            '%s/traefik.io_traefikservices.yaml' % url,
-          ]
-        else
-          [
-            '%s/traefik.io_ingressroutes.yaml' % url,
-            '%s/traefik.io_ingressroutetcps.yaml' % url,
-            '%s/traefik.io_ingressrouteudps.yaml' % url,
-            '%s/traefik.io_middlewares.yaml' % url,
-            '%s/traefik.io_middlewaretcps.yaml' % url,
-            '%s/traefik.io_serverstransports.yaml' % url,
-            '%s/traefik.io_serverstransporttcps.yaml' % url,
-            '%s/traefik.io_tlsoptions.yaml' % url,
-            '%s/traefik.io_tlsstores.yaml' % url,
-            '%s/traefik.io_traefikservices.yaml' % url,
-          ],
+      crds: ['https://raw.githubusercontent.com/traefik/traefik/%s/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml' % v.tag],
       localName: 'traefik',
     }
-    for v in versions
+    for v in upstream.versions
   ]
 )

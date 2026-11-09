@@ -1,0 +1,37 @@
+{
+  "enabled": true,
+  "source": {
+    "kind": "git-tags",
+    "repo": "https://github.com/metallb/metallb",
+    "tagPattern": "^v(\\d+)\\.(\\d+)\\.(\\d+)$"
+  },
+  "policy": {
+    "minors": 5,
+    "keep": [
+      "0.14"
+    ],
+    "since": "0.13"
+  },
+  "versions": [
+    {
+      "output": "0.16",
+      "tag": "v0.16.2",
+      "version": "0.16.2"
+    },
+    {
+      "output": "0.15",
+      "tag": "v0.15.3",
+      "version": "0.15.3"
+    },
+    {
+      "output": "0.14",
+      "tag": "v0.14.9",
+      "version": "0.14.9"
+    },
+    {
+      "output": "0.13",
+      "tag": "v0.13.12",
+      "version": "0.13.12"
+    }
+  ]
+}

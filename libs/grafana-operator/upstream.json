@@ -1,0 +1,41 @@
+{
+  "enabled": true,
+  "source": {
+    "kind": "git-tags",
+    "repo": "https://github.com/grafana/grafana-operator",
+    "tagPattern": "^v(\\d+)\\.(\\d+)\\.(\\d+)$"
+  },
+  "policy": {
+    "minors": 5,
+    "keep": [
+      "5.22"
+    ]
+  },
+  "versions": [
+    {
+      "output": "5.25",
+      "tag": "v5.25.0",
+      "version": "5.25.0"
+    },
+    {
+      "output": "5.24",
+      "tag": "v5.24.0",
+      "version": "5.24.0"
+    },
+    {
+      "output": "5.23",
+      "tag": "v5.23.0",
+      "version": "5.23.0"
+    },
+    {
+      "output": "5.22",
+      "tag": "v5.22.2",
+      "version": "5.22.2"
+    },
+    {
+      "output": "5.21",
+      "tag": "v5.21.4",
+      "version": "5.21.4"
+    }
+  ]
+}

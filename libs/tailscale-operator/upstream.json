@@ -1,0 +1,46 @@
+{
+  "enabled": true,
+  "source": {
+    "kind": "git-tags",
+    "repo": "https://github.com/tailscale/tailscale",
+    "tagPattern": "^v(\\d+)\\.(\\d+)\\.(\\d+)$"
+  },
+  "policy": {
+    "minors": 5,
+    "keep": [
+      "1.94"
+    ]
+  },
+  "versions": [
+    {
+      "output": "1.104",
+      "tag": "v1.104.5",
+      "version": "1.104.5"
+    },
+    {
+      "output": "1.102",
+      "tag": "v1.102.5",
+      "version": "1.102.5"
+    },
+    {
+      "output": "1.100",
+      "tag": "v1.100.0",
+      "version": "1.100.0"
+    },
+    {
+      "output": "1.98",
+      "tag": "v1.98.10",
+      "version": "1.98.10"
+    },
+    {
+      "output": "1.96",
+      "tag": "v1.96.5",
+      "version": "1.96.5"
+    },
+    {
+      "output": "1.94",
+      "tag": "v1.94.2",
+      "version": "1.94.2"
+    }
+  ]
+}

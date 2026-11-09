@@ -1,28 +1,15 @@
 local config = import 'jsonnet/config.jsonnet';
-local versions = ['0.14.8'];
-local manifests = [
-  'bfdprofiles',
-  'bgpadvertisements',
-  'bgppeers',
-  'communities',
-  'ipaddresspools',
-  'l2advertisements',
-  'servicel2statuses',
-];
+local upstream = import 'upstream.json';
 
 config.new(
   name='metallb',
   specs=[
     {
       localName: 'metallb',
-      output: std.join('.', std.split(version, '.')[:2]),
+      output: v.output,
       prefix: '^io\\.metallb\\..*',
-      crds: [
-        'https://raw.githubusercontent.com/metallb/metallb/v%s/config/crd/bases/metallb.io_%s.yaml'
-        % [version, manifest]
-        for manifest in manifests
-      ],
+      crds: ['https://raw.githubusercontent.com/metallb/metallb/%s/config/manifests/metallb-native.yaml' % v.tag],
     }
-    for version in versions
+    for v in upstream.versions
   ]
 )
