@@ -23,7 +23,7 @@ Hard fork of [jsonnet-libs/k8s](https://github.com/jsonnet-libs/k8s) that keeps 
 
 1. **discover / bump** (`cmd/libctl`): per managed lib, list tags, apply policy, diff against `upstream.json` `versions`, rewrite them.
 2. **generate** (`bin/gen-local` → `scripts/gen.sh`): render `config.jsonnet`, run `k8s-gen` and docsonnet into `gen/`.
-3. **verify** (`libctl verify`): output dirs match config, docs exist, `main.libsonnet` evaluates with every kind loaded, no kind disappears within a published minor.
+3. **verify** (`libctl verify`): output dirs match config, docs exist, `main.libsonnet` evaluates with every kind loaded, `libs/<lib>/tests/*.jsonnet` pass, no kind disappears within a published minor.
 4. **publish** (`scripts/publish.sh`, CI on `main`): push changed libs, tag.
 
 Workflows: `ci` (test, then generate → verify → publish per lib), `image` (multi-arch `ghcr.io/jsonnet-libs-auto/generator`), `discover` (daily `libctl bump` → auto-merging PR; failures open a `needs-agent` issue).
@@ -58,7 +58,7 @@ The agent enters only through a `needs-agent` issue or a failing CI run, using `
 - [x] CI: test, then generate → verify → publish per lib.
 - [x] `k8s-gen` fails on HTTP errors (with 5xx retries) and on outputs with no API groups.
 - [x] Generate only libs affected by a change (`scripts/changed-libs.sh`).
-- [ ] testonnet golden tests for `libs/k8s/custom/` patches.
+- [x] Lib tests: `libs/<lib>/tests/*.jsonnet` run in verify; `libs/k8s` covers its `custom/` patches.
 
 ### 5. Agent guidance
 - [x] Skills: `update-lib`, `add-lib`, `triage-generation-failure`.
