@@ -57,7 +57,7 @@ The agent enters only through a `needs-agent` issue or a failing CI run, using `
 - [x] `libctl verify` with tests; `scripts/publish.sh` split from generation.
 - [x] CI: test, then generate → verify → publish per lib.
 - [x] `k8s-gen` fails on HTTP errors (with 5xx retries) and on outputs with no API groups.
-- [ ] Generate only libs affected by a change (currently every lib on every push).
+- [x] Generate only libs affected by a change (`scripts/changed-libs.sh`).
 - [ ] testonnet golden tests for `libs/k8s/custom/` patches.
 
 ### 5. Agent guidance
