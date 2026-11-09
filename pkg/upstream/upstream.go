@@ -43,7 +43,7 @@ type Policy struct {
 	// Minors is how many of the newest minor versions to track.
 	Minors int `json:"minors"`
 	// Keep lists extra outputs ("X.Y") that stay tracked when they fall out
-	// of Minors, for consumers pinned to an older minor.
+	// of Minors, for minors upstream still supports (LTS lines).
 	Keep []string `json:"keep,omitempty"`
 	// Since ("X.Y") excludes older minors, e.g. releases that predate the
 	// project's CRDs.
