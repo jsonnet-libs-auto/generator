@@ -21,12 +21,16 @@ OUTPUT_DIR="$2/${REPO}"
 if [ "${GEN_COMMIT:-false}" != "true" ]; then
     mkdir -p "${OUTPUT_DIR}"
 else
-    "${DIRNAME}/configure_github_ssh.sh" "${DIRNAME}"
-    export GIT_SSH_COMMAND="ssh -F '${DIRNAME}/ssh/config'"
-    git clone --depth 1 "ssh://git@${REPO}" "${OUTPUT_DIR}"
+    # Token via env-scoped git config: nothing lands in remotes or config files.
+    : "${GITHUB_TOKEN:?GITHUB_TOKEN must be set to publish}"
+    export GIT_CONFIG_COUNT=1
+    export GIT_CONFIG_KEY_0="http.https://github.com/.extraheader"
+    GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $(printf 'x-access-token:%s' "${GITHUB_TOKEN}" | base64 | tr -d '\n')"
+    export GIT_CONFIG_VALUE_0
+    git clone --depth 1 "https://${REPO}" "${OUTPUT_DIR}"
 
-    git config --global user.name "${GIT_COMMITTER_NAME}"
-    git config --global user.email "${GIT_COMMITTER_EMAIL}"
+    git -C "${OUTPUT_DIR}" config user.name "${GIT_COMMITTER_NAME}"
+    git -C "${OUTPUT_DIR}" config user.email "${GIT_COMMITTER_EMAIL}"
 fi
 
 # Remove everything except .git
@@ -53,7 +57,9 @@ else
     git add -A
     if ! git diff --cached --quiet; then
         git commit -m "update: source github.com/jsonnet-libs-auto/generator@${GITHUB_SHA:0:8}"
-        git push
+        # Lets consumers pin a lib to the generator commit that produced it.
+        git tag "gen-${GITHUB_SHA:0:8}"
+        git push --atomic origin HEAD "refs/tags/gen-${GITHUB_SHA:0:8}"
     else
         echo "Nothing to commit."
     fi
