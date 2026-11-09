@@ -12,6 +12,7 @@ OBJECTMETA_VERSION := v1.23.4
 
 help:
 	@echo "make test            Go tests"
+	@echo "make verify LIB=<name> check a generated lib before publishing"
 	@echo "make libs            generate every managed lib into gen/"
 	@echo "make libs/<name>     generate one lib into gen/"
 	@echo "make discover        report upstream version changes (JSON)"
@@ -45,4 +46,7 @@ update_objectmeta:
 image:
 	docker build -t $(IMAGE):$(IMAGE_TAG) .
 
-.PHONY: help test libs discover bump update_objectmeta image
+.PHONY: help test libs discover bump verify update_objectmeta image
+
+verify:
+	@$(LIBCTL) verify $(or $(LIB),$(LIBS))

@@ -52,7 +52,7 @@ jobs:
           go-version-file: go.mod
 
       # Publishing needs the org's GitHub App; without it (forks, PRs) this
-      # job still generates and diffs against the published repo.
+      # job still generates and verifies against the published repo.
       - id: app
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.PUBLISH_APP_ID != ''
         uses: actions/create-github-app-token@v1
@@ -63,10 +63,12 @@ jobs:
 
       - name: generate
         run: bin/gen-local "${{ matrix.lib }}"
+
+      - name: verify
+        run: go run ./cmd/libctl verify "${{ matrix.lib }}"
+
+      - name: publish
+        if: steps.app.outputs.token != ''
+        run: scripts/publish.sh "${{ matrix.lib }}"
         env:
-          GEN_COMMIT: ${{ steps.app.outputs.token != '' }}
           GITHUB_TOKEN: ${{ steps.app.outputs.token }}
-          GITHUB_SHA: ${{ github.sha }}
-          GIT_COMMITTER_NAME: jsonnet-libs-auto[bot]
-          GIT_COMMITTER_EMAIL: jsonnet-libs-auto[bot]@users.noreply.github.com
-          DIFF: "true"
