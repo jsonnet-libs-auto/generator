@@ -1,0 +1,11 @@
+# Local generator output; published to the *-libsonnet repos, never committed here.
+/gen/
+/artifacts/
+/vendor/
+
+# Rendered per-lib config (from libs/<name>/config.jsonnet)
+/libs/*/config.yml
+/libs/*/skel/
+
+/tf/.terraform/
+/tf/*.tfplan
