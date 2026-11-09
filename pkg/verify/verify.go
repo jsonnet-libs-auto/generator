@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/google/go-jsonnet"
 	"gopkg.in/yaml.v3"
@@ -57,8 +58,14 @@ const walkDepth = 6
 
 // Verify checks dir (a generated lib repo) against cfg. baseline is the
 // currently published repo, or "" if there is none yet. jpath must resolve
-// doc-util/main.libsonnet.
-func Verify(cfg *Config, dir, baseline string, jpath []string) Report {
+// doc-util/main.libsonnet. Every *.jsonnet in testsDir (may be "") is
+// evaluated against each output, with main.libsonnet importable.
+func Verify(cfg *Config, dir, baseline, testsDir string, jpath []string) Report {
+	tests, err := filepath.Glob(filepath.Join(testsDir, "*.jsonnet"))
+	if testsDir == "" || err != nil {
+		tests = nil
+	}
+
 	var r Report
 
 	want := map[string]bool{}
@@ -100,6 +107,12 @@ func Verify(cfg *Config, dir, baseline string, jpath []string) Report {
 			r.errorf("%s: main.libsonnet does not evaluate: %v", s.Output, err)
 		}
 		o.Fields = fields
+
+		for _, test := range tests {
+			if err := runTest(out, test, jpath); err != nil {
+				r.errorf("%s: test %s: %v", s.Output, filepath.Base(test), err)
+			}
+		}
 
 		if baseline != "" {
 			if old, err := genFiles(filepath.Join(baseline, s.Output)); err == nil {
@@ -144,6 +157,27 @@ func missing(old, cur []string) []string {
 		}
 	}
 	return out
+}
+
+// runTest evaluates a test file with the output dir first on the search path,
+// so `import 'main.libsonnet'` resolves to the generated lib. A test passes
+// when it evaluates to true.
+func runTest(out, test string, jpath []string) error {
+	src, err := os.ReadFile(test)
+	if err != nil {
+		return err
+	}
+	vm := jsonnet.MakeVM()
+	vm.Importer(&jsonnet.FileImporter{JPaths: append([]string{out}, jpath...)})
+	// Evaluated as if it lived in the output dir; errors show the test's file name.
+	res, err := vm.EvaluateAnonymousSnippet(filepath.Join(out, filepath.Base(test)), string(src))
+	if err != nil {
+		return err
+	}
+	if got := strings.TrimSpace(res); got != "true" {
+		return fmt.Errorf("evaluated to %s, want true", got)
+	}
+	return nil
 }
 
 // evaluate forces every import reachable from main.libsonnet down to

@@ -60,7 +60,7 @@ func verifyCmd() *cli.Command {
 				baseline = b
 			}
 
-			res.Report = verify.Verify(cfg, filepath.Join(*genDir, cfg.Repository), baseline, jp)
+			res.Report = verify.Verify(cfg, filepath.Join(*genDir, cfg.Repository), baseline, filepath.Join(*libsDir, lib, "tests"), jp)
 			failed = failed || len(res.Errors) > 0
 			results = append(results, res)
 		}

@@ -44,7 +44,7 @@ func config(outputs ...string) *Config {
 func TestVerifyPasses(t *testing.T) {
 	dir := t.TempDir()
 	writeLib(t, dir, "1.0", "foo", "bar")
-	r := Verify(config("1.0"), dir, "", nil)
+	r := Verify(config("1.0"), dir, "", "", nil)
 	assert.Empty(t, r.Errors)
 	require.Len(t, r.Outputs, 1)
 	assert.Equal(t, 3, r.Outputs[0].Kinds)
@@ -55,7 +55,7 @@ func TestVerifyMissingAndUnexpectedOutputs(t *testing.T) {
 	dir := t.TempDir()
 	writeLib(t, dir, "1.0", "foo")
 	writeLib(t, dir, "0.9", "foo")
-	r := Verify(config("1.0", "1.1"), dir, "", nil)
+	r := Verify(config("1.0", "1.1"), dir, "", "", nil)
 	assert.Len(t, r.Errors, 2)
 	assert.Contains(t, strings.Join(r.Errors, "\n"), `unexpected output dir "0.9"`)
 	assert.Contains(t, strings.Join(r.Errors, "\n"), "1.1:")
@@ -65,7 +65,7 @@ func TestVerifyMissingDocs(t *testing.T) {
 	dir := t.TempDir()
 	writeLib(t, dir, "1.0", "foo")
 	require.NoError(t, os.RemoveAll(filepath.Join(dir, "docs")))
-	r := Verify(config("1.0"), dir, "", nil)
+	r := Verify(config("1.0"), dir, "", "", nil)
 	assert.Contains(t, strings.Join(r.Errors, "\n"), "missing docs/1.0/README.md")
 }
 
@@ -73,8 +73,27 @@ func TestVerifyEvaluationError(t *testing.T) {
 	dir := t.TempDir()
 	writeLib(t, dir, "1.0", "foo")
 	require.NoError(t, os.WriteFile(filepath.Join(dir, "1.0/_gen/g/v1/foo.libsonnet"), []byte("{ broken: error 'boom' }"), 0o644))
-	r := Verify(config("1.0"), dir, "", nil)
+	r := Verify(config("1.0"), dir, "", "", nil)
 	assert.Contains(t, strings.Join(r.Errors, "\n"), "boom")
+}
+
+func TestVerifyRunsLibTests(t *testing.T) {
+	dir, tests := t.TempDir(), t.TempDir()
+	writeLib(t, dir, "1.0", "foo")
+	write := func(name, src string) {
+		require.NoError(t, os.WriteFile(filepath.Join(tests, name), []byte(src), 0o644))
+	}
+	write("pass.jsonnet", "local k = import 'main.libsonnet'; std.assertEqual(k.g.v1.foo.new('x'), { name: 'x' })")
+	r := Verify(config("1.0"), dir, "", tests, nil)
+	assert.Empty(t, r.Errors)
+
+	write("fail.jsonnet", "local k = import 'main.libsonnet'; std.assertEqual(k.g.v1.foo.new('x'), { name: 'y' })")
+	write("notbool.jsonnet", "{}")
+	r = Verify(config("1.0"), dir, "", tests, nil)
+	errs := strings.Join(r.Errors, "\n")
+	assert.Contains(t, errs, "test fail.jsonnet")
+	assert.Contains(t, errs, "test notbool.jsonnet: evaluated to { }")
+	assert.Len(t, r.Errors, 2)
 }
 
 func TestVerifyRemovedKindsAgainstBaseline(t *testing.T) {
@@ -83,7 +102,7 @@ func TestVerifyRemovedKindsAgainstBaseline(t *testing.T) {
 	writeLib(t, dir, "1.0", "foo")
 	writeLib(t, dir, "1.1", "foo") // new minor: no baseline, removals allowed
 
-	r := Verify(config("1.0", "1.1"), dir, baseline, nil)
+	r := Verify(config("1.0", "1.1"), dir, baseline, "", nil)
 	require.Len(t, r.Errors, 1)
 	assert.Contains(t, r.Errors[0], "1.0: 1 generated files removed")
 	assert.Equal(t, []string{"g/v1/bar.libsonnet"}, r.Outputs[0].Removed)
