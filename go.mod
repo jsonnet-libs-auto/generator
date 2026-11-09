@@ -1,4 +1,4 @@
-module github.com/jsonnet-libs/k8s
+module github.com/jsonnet-libs-auto/generator
 
 go 1.23.0
 

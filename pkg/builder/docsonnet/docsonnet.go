@@ -1,7 +1,7 @@
 package docsonnet
 
 import (
-	j "github.com/jsonnet-libs/k8s/pkg/builder"
+	j "github.com/jsonnet-libs-auto/generator/pkg/builder"
 )
 
 const dPkg = "doc-util/main.libsonnet"

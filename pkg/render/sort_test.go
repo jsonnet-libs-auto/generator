@@ -3,7 +3,7 @@ package render
 import (
 	"testing"
 
-	j "github.com/jsonnet-libs/k8s/pkg/builder"
+	j "github.com/jsonnet-libs-auto/generator/pkg/builder"
 	"github.com/stretchr/testify/assert"
 )
 

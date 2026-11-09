@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	j "github.com/jsonnet-libs/k8s/pkg/builder"
-	d "github.com/jsonnet-libs/k8s/pkg/builder/docsonnet"
-	"github.com/jsonnet-libs/k8s/pkg/model"
-	"github.com/jsonnet-libs/k8s/pkg/swagger"
+	j "github.com/jsonnet-libs-auto/generator/pkg/builder"
+	d "github.com/jsonnet-libs-auto/generator/pkg/builder/docsonnet"
+	"github.com/jsonnet-libs-auto/generator/pkg/model"
+	"github.com/jsonnet-libs-auto/generator/pkg/swagger"
 )
 
 const (
