@@ -4,8 +4,14 @@ Generates Jsonnet libraries and publishes them to `github.com/jsonnet-libs-auto/
 
 ## Rules
 
-- **No host software installs** (`mise install`, `apt`, `brew`, `pip`, `npm`, `go install`, `cargo install`, `curl | sh`, shell rc edits). Missing tool ⇒ stop and report. Use the toolchain on `PATH` or the pinned generator container.
+- **No host software installs** (`mise install`, `apt`, `brew`, `pip`, `npm`, `go install`, `cargo install`, `curl | sh`, shell rc edits). Missing tool ⇒ stop and report. Tools the generator needs (jsonnet, docsonnet) are `tool` deps in `go.mod`; run them with `go tool` or `bin/gen-local`, and add new ones the same way.
+- **Generate with `bin/gen-local <lib>` (or `make libs/<name>`)** into `gen/`, then `go run ./cmd/libctl verify <lib>`. A change to a lib isn't done until verify passes. Never run `scripts/publish.sh`; only CI publishes.
 - **On any generator, tool, CRD or library error, search upstream issues and PRs first** (open and closed) with the GitHub MCP: the project that owns the CRDs, and [jsonnet-libs/k8s](https://github.com/jsonnet-libs/k8s), which may already have a fix to port.
+- **A lib is managed iff `libs/<name>/upstream.json` exists with `"enabled": true`.** Other `libs/` dirs are upstream leftovers; they are never generated.
+- **`upstream.json` `versions` is script-owned.** Change it only via `go run ./cmd/libctl bump`; edit `source` and `policy` by hand. URL layout and per-version path switches belong in `config.jsonnet`, using `v.output`, `v.tag` and `v.version`.
+- **Outputs are always `major.minor`.** Never add a full-version output dir; patch releases replace the files under the same dir.
+- **`policy.keep` entries are consumer pins.** Don't drop one unless you know no consumer imports that minor.
+- **Prefer one upstream bundle over hand-kept CRD file lists** (release install manifest, `bundle.yaml`, chart `crds/`): the generator only keeps `CustomResourceDefinition`s, and new CRDs then appear without edits.
 - **Never hand-edit generated output.** `gen/` is local and gitignored; the `*-libsonnet` repos are written only by the publish step. Fix the source (`libs/<name>/`, `jsonnet/`, `pkg/`) and regenerate.
 - **Verify the API group before adding or changing a lib.** `prefix` is the reversed `spec.group` of the CRDs; same-named upstream projects can ship different groups.
 - **Never widen a version policy or delete a test to make a failing run pass.** Stop and report instead.
