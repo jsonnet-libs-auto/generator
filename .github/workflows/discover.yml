@@ -1,0 +1,82 @@
+name: discover
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      # PRs opened with GITHUB_TOKEN don't trigger CI, so use the App token.
+      - id: app
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.PUBLISH_APP_ID }}
+          private-key: ${{ secrets.PUBLISH_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app.outputs.token }}
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - id: bump
+        name: libctl bump
+        run: |
+          set +e
+          go run ./cmd/libctl bump > bump.json
+          echo "exit=$?" >> "$GITHUB_OUTPUT"
+          cat bump.json
+          {
+            echo 'summary<<EOF'
+            jq -r '.[] | if .error then "- **\(.lib)**: discovery failed: \(.error)" else
+              "- **\(.lib)**: " + ([(.diff.added // [])[] | "add \(.output) (\(.to))"]
+              + [(.diff.updated // [])[] | "\(.output) \(.from) → \(.to)"]
+              + [(.diff.removed // [])[] | "drop \(.output) (\(.from))"] | join(", ")) end' bump.json
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+          rm bump.json
+
+      - name: open PR
+        id: pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ steps.app.outputs.token }}
+          branch: auto/bump
+          delete-branch: true
+          commit-message: "chore(libs): bump upstream versions"
+          title: "chore(libs): bump upstream versions"
+          body: |
+            Opened by `discover`. Merges automatically when CI passes.
+
+            ${{ steps.bump.outputs.summary }}
+          labels: auto-bump
+
+      - name: enable auto-merge
+        if: steps.pr.outputs.pull-request-number != ''
+        run: gh pr merge --auto --squash "${{ steps.pr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+
+      # Discovery errors need a source change: hand them to the agent.
+      - name: report discovery failures
+        if: steps.bump.outputs.exit != '0'
+        run: |
+          title="discover: upstream discovery failed"
+          body=$(printf 'Run: %s/%s/actions/runs/%s\n\n%s\n\nFollow `.agents/skills/triage-generation-failure`.' \
+            "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "${{ steps.bump.outputs.summary }}")
+          existing=$(gh issue list --state open --label needs-agent --search "in:title \"$title\"" --json number -q '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --label needs-agent --body "$body"
+          fi
+          exit 1
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}

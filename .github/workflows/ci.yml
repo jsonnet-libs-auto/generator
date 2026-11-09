@@ -1,0 +1,72 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: gofmt
+        run: test -z "$(gofmt -l .)" || { gofmt -l .; exit 1; }
+      - run: make test
+
+  matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      libs: ${{ steps.libs.outputs.libs }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - id: libs
+        run: echo "libs=$(go run ./cmd/libctl list | jq -Rnc '[inputs]')" >> "$GITHUB_OUTPUT"
+
+  generate:
+    needs: [test, matrix]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        lib: ${{ fromJSON(needs.matrix.outputs.libs) }}
+    name: generate ${{ matrix.lib }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      # Publishing needs the org's GitHub App; without it (forks, PRs) this
+      # job still generates and diffs against the published repo.
+      - id: app
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.PUBLISH_APP_ID != ''
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.PUBLISH_APP_ID }}
+          private-key: ${{ secrets.PUBLISH_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+
+      - name: generate
+        run: bin/gen-local "${{ matrix.lib }}"
+        env:
+          GEN_COMMIT: ${{ steps.app.outputs.token != '' }}
+          GITHUB_TOKEN: ${{ steps.app.outputs.token }}
+          GITHUB_SHA: ${{ github.sha }}
+          GIT_COMMITTER_NAME: jsonnet-libs-auto[bot]
+          GIT_COMMITTER_EMAIL: jsonnet-libs-auto[bot]@users.noreply.github.com
+          DIFF: "true"
