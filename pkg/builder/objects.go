@@ -43,7 +43,7 @@ func Object(name string, children ...Type) ObjectType {
 func escapeKey(s string) string {
 	switch s {
 	case "assert", "else", "error", "false", "for", "function", "if",
-		"import", "importstr", "in", "local", "null", "tailstrict", 
+		"import", "importstr", "in", "local", "null", "tailstrict",
 		"then", "self", "super", "true":
 		return fmt.Sprintf(`'%s'`, s)
 	default:

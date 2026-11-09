@@ -173,7 +173,7 @@ func (mPtr *modifiers) UnmarshalJSON(data []byte) error {
 func newKind(d swagger.Schema, name string) Kind {
 	kind := Kind{
 		// Help text: description
-		Help: safeStr(d.Desc),
+		Help:  safeStr(d.Desc),
 		Scope: d.Scope,
 	}
 

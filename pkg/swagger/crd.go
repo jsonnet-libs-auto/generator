@@ -139,4 +139,3 @@ func (c *CRDLoader) splitYAML(resources []byte) ([][]byte, error) {
 	}
 	return res, nil
 }
-

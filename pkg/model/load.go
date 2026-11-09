@@ -38,11 +38,11 @@ func Load(definitions *swagger.Definitions, prefix string) map[string]Group {
 // transform creates an ID-table that maps our structure to the one of the
 // swagger spec:
 //
-//    "apps": map[string]string{
-//      "v1": "io.k8s.api.apps.v1",
-//      "v1beta1": "io.k8s.api.apps.v1beta1",
-//      "v1beta2": "io.k8s.api.apps.v1beta2",
-//    },
+//	"apps": map[string]string{
+//	  "v1": "io.k8s.api.apps.v1",
+//	  "v1beta1": "io.k8s.api.apps.v1beta1",
+//	  "v1beta2": "io.k8s.api.apps.v1beta2",
+//	},
 //
 // These are used in newGroups to match the all kinds for a given version
 func transform(defs swagger.Definitions) IDs {

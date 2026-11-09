@@ -22,4 +22,3 @@ func (ds Definitions) Sub(exp string) Definitions {
 		return rg.MatchString(k)
 	})
 }
-

@@ -57,7 +57,7 @@ func (s *SwaggerLoader) get(prop *Schema) *Schema {
 	}
 	rs := s.Definitions[ref]
 
-    // return if cannot resolve reference
+	// return if cannot resolve reference
 	if rs == nil {
 		return nil
 	}
