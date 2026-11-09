@@ -21,7 +21,7 @@ func main() {
 		Use:   "libctl",
 		Short: "Manage tracked upstream versions of generated libs",
 	}
-	root.AddCommand(listCmd(), discoverCmd(), bumpCmd())
+	root.AddCommand(listCmd(), discoverCmd(), bumpCmd(), verifyCmd())
 	if err := root.Execute(); err != nil {
 		log.Fatalln(err)
 	}
