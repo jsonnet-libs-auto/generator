@@ -49,8 +49,9 @@ if [ "${GEN_COMMIT:-false}" != "true" ]; then
     ls -lah "${OUTPUT_DIR}"
 else
     pushd "${OUTPUT_DIR}"
-    if ! git diff --exit-code -s; then
-        git add .
+    # Stage first: a brand-new version dir is untracked and invisible to `git diff`.
+    git add -A
+    if ! git diff --cached --quiet; then
         git commit -m "update: source github.com/jsonnet-libs-auto/generator@${GITHUB_SHA:0:8}"
         git push
     else
