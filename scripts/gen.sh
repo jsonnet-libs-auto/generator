@@ -8,6 +8,8 @@ GEN_ROOT=${GEN_ROOT:-${DIRNAME}}
 
 INPUT_DIR="$1"
 
+# Rendered fresh each run; stale skel files would otherwise leak into the output.
+rm -rf "${INPUT_DIR}/skel" "${INPUT_DIR}/config.yml"
 jsonnet -c -m "${INPUT_DIR}" -J "${GEN_ROOT}" -S "${INPUT_DIR}/config.jsonnet"
 
 CONFIG_FILE="${INPUT_DIR}/config.yml"
