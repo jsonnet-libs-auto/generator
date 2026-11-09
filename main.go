@@ -78,6 +78,10 @@ func main() {
 			}
 
 			groups := model.Load(&definitions, t.Prefix)
+			// An empty lib usually means upstream moved or emptied the CRD file.
+			if len(groups) == 0 {
+				return fmt.Errorf("output %q: no API groups found in %d spec(s); check the CRD URLs and prefix", t.Output, max(len(t.Crds), 1))
+			}
 			path := filepath.Join(*output, t.Output)
 			renderJsonnet(path, groups, t)
 		}
