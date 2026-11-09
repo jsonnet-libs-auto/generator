@@ -1,3 +1,5 @@
+local org = import './org.json';
+
 {
   new(
     name,
@@ -9,9 +11,9 @@
 
     name:: name,
     description:: this.name + ' jsonnet library',
-    repository:: 'github.com/jsonnet-libs/' + this.name + this.suffix,
-    branch:: 'main',
-    site_url:: 'https://jsonnet-libs.github.io/' + this.name + this.suffix,
+    repository:: 'github.com/%s/%s%s' % [org.org, this.name, this.suffix],
+    branch:: org.branch,
+    generator_url:: 'https://github.com/%s/%s' % [org.org, org.generator],
 
     'skel/LICENSE': importstr '../LICENSE',
 
@@ -28,14 +30,20 @@
     readme_template(name, data):: |||
       # %s Jsonnet library
 
-      This library is generated with [`k8s`](https://github.com/jsonnet-libs/k8s).
+      This library is generated with [`generator`](%s).
 
       %s
-    ||| % [name, data],
+    ||| % [name, this.generator_url, data],
 
     'skel/README.md': this.readme_template(
       name=name,
-      data='[Docs](' + this.site_url + ')',
+      data=|||
+        ```bash
+        jb install %(repository)s/%(output)s@%(branch)s
+        ```
+
+        [Docs](docs/README.md)
+      ||| % { repository: this.repository, output: specs[0].output, branch: this.branch },
     ),
 
     'skel/docs/README.md': this.readme_template(
@@ -45,38 +53,5 @@
         for spec in specs
       ]),
     ),
-
-    local mkdocs = import './mkdocs.jsonnet',
-    mkdocs_config:: mkdocs.config {
-      site_name: this.description,
-      site_url: this.site_url,
-      repo_url: 'https://' + this.repository,
-    },
-
-    mkdocs_github_action:: mkdocs.action {
-      branch:: this.branch,
-    },
-
-    'skel/mkdocs.yml': std.manifestYamlDoc(this.mkdocs_config, true),
-
-    'skel/.github/workflows/main.yml': std.manifestYamlDoc(this.mkdocs_github_action, true),
-    'skel/docs/stylesheets/extra.css': importstr 'files/mkdocs.css',
-
-    'skel/requirements.txt': |||
-      # mkdocs
-      mkdocs>=1.3.0
-
-      # To limit search to a subset
-      mkdocs-exclude-search>=0.5
-
-      # To minify the HTML
-      mkdocs-minify-plugin>=0.3
-
-      # Include the theme
-      mkdocs-material>=7.1.6
-
-      # Deal with list indent of 2 spaces
-      mdx-truly-sane-lists>=1.3
-    |||,
   },
 }

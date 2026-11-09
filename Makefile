@@ -1,5 +1,5 @@
-IMAGE_NAME ?= k8s-gen
-IMAGE_PREFIX ?= ghcr.io/jsonnet-libs
+IMAGE_NAME ?= generator
+IMAGE_PREFIX ?= ghcr.io/jsonnet-libs-auto
 IMAGE_TAG ?= 0.0.8
 
 OUTPUT_DIR ?= ${PWD}/gen

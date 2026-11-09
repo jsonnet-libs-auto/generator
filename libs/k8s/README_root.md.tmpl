@@ -1,7 +1,7 @@
 # k8s-libsonnet
 
 This repository contains artifacts of the `k8s-libsonnet` Jsonnet Kubernetes library.
-It is generated with `k8s-gen`, located at https://github.com/jsonnet-libs/k8s.
+It is generated with `generator`, located at https://github.com/jsonnet-libs-auto/generator.
 
 ## Usage
 
@@ -17,13 +17,13 @@ For more info, refer to the Tanka tutorial at https://tanka.dev/tutorial/k-lib.
 #### Standalone
 
 ```bash
-$ jb install github.com/jsonnet-libs/k8s-libsonnet/%(version)s@main
+$ jb install github.com/jsonnet-libs-auto/k8s-libsonnet/%(version)s@main
 ```
 
 Then import it in your project:
 
 ```jsonnet
-local k = import "github.com/jsonnet-libs/k8s-libsonnet/%(version)s/main.libsonnet"
+local k = import "github.com/jsonnet-libs-auto/k8s-libsonnet/%(version)s/main.libsonnet"
 ```
 
 ## FAQ
@@ -37,7 +37,7 @@ The API aims to be very similar to `ksonnet-gen`, but not 100%% the same, to
 allow enough room for important improvements.
 
 If something does not look as expected, please open an issue at
-https://github.com/jsonnet-libs/k8s
+https://github.com/jsonnet-libs-auto/generator
 
 #### Shall I use it?
 
@@ -88,8 +88,8 @@ https://github.com/kube-jsonnet/k as soon as possible.
 
 #### Where can I find documentation?
 
-The generated docs can be found here: https://jsonnet-libs.github.io/k8s-libsonnet/.
+The generated docs can be found in [`docs/`](docs/README.md).
 
 #### I found a bug, where can I report this?
 
-Great, let's try and fix that, please report issues in https://github.com/jsonnet-libs/k8s.
+Great, let's try and fix that, please report issues in https://github.com/jsonnet-libs-auto/generator.

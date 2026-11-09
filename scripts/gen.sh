@@ -27,13 +27,6 @@ else
 
     git config --global user.name "${GIT_COMMITTER_NAME}"
     git config --global user.email "${GIT_COMMITTER_EMAIL}"
-
-    # Create the gh-pages branch if it doesn't exist.
-    pushd "${OUTPUT_DIR}"
-    set +eo pipefail
-    git push origin gh-pages || (git branch -c gh-pages && git push origin gh-pages)
-    set -eo pipefail
-    popd
 fi
 
 # Remove everything except .git
@@ -58,7 +51,7 @@ else
     pushd "${OUTPUT_DIR}"
     if ! git diff --exit-code -s; then
         git add .
-        git commit -m "update: source github.com/jsonnet-libs/k8s@${GITHUB_SHA:0:8}"
+        git commit -m "update: source github.com/jsonnet-libs-auto/generator@${GITHUB_SHA:0:8}"
         git push
     else
         echo "Nothing to commit."

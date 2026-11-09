@@ -5,7 +5,7 @@ permalink: /
 # Jsonnet Kubernetes library
 
 The Jsonnet Kubernetes library is a generated with
-[`k8s`](https://github.com/jsonnet-libs/k8s) from the OpenAPI specification
+[`generator`](https://github.com/jsonnet-libs-auto/generator) from the OpenAPI specification
 (`swagger.json`) of the Kubernetes API.
 
 Currently, artifacts for the following Kubernetes versions are provided:
@@ -42,7 +42,7 @@ can be rendered with this jsonnet:
 
 ```jsonnet
 {
-  local k = (import "github.com/jsonnet-libs/k8s-libsonnet/1.18/main.libsonnet"),
+  local k = (import "github.com/jsonnet-libs-auto/k8s-libsonnet/1.18/main.libsonnet"),
   foo: k.apps.v1.deployment.new(name="foo", containers=[
     k.core.v1.container.new(name="foo", image="foo/bar")
   ])
