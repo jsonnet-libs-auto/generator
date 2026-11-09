@@ -28,7 +28,6 @@ function(libs) {
               homepage_url: 'https://' + lib.repository,
               topics: ['jsonnet', 'jsonnet-lib'],
               auto_init: true,
-              has_downloads: false,
               has_issues: true,
               has_projects: false,
               has_wiki: false,
