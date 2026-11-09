@@ -34,7 +34,7 @@ If `libs/<name>/config.jsonnet` already exists (inherited from jsonnet-libs), st
 ```
 
 - `policy.minors` is 5 unless the human said otherwise.
-- `policy.since` only when old releases have no CRDs; `policy.keep` only for a minor a consumer is known to import.
+- `policy.since` only when old releases have no CRDs; `policy.keep` only for a minor upstream still supports outside the window (an LTS line).
 
 `libs/<name>/config.jsonnet`: a spec per `upstream.versions` entry with `output: v.output`, URLs from `v.tag` / `v.version`, and:
 

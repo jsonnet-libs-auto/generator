@@ -10,7 +10,7 @@ Generates Jsonnet libraries and publishes them to `github.com/jsonnet-libs-auto/
 - **A lib is managed iff `libs/<name>/upstream.json` exists with `"enabled": true`.** Other `libs/` dirs are upstream leftovers; they are never generated.
 - **`upstream.json` `versions` is script-owned.** Change it only via `go run ./cmd/libctl bump`; edit `source` and `policy` by hand. URL layout and per-version path switches belong in `config.jsonnet`, using `v.output`, `v.tag` and `v.version`.
 - **Outputs are always `major.minor`.** Never add a full-version output dir; patch releases replace the files under the same dir.
-- **`policy.keep` entries are consumer pins.** Don't drop one unless you know no consumer imports that minor.
+- **`policy.keep` is only for minors upstream still supports outside the window** (an LTS line). Never add one for a particular user's imports; they can pin a `gen-<sha>` tag instead.
 - **Prefer one upstream bundle over hand-kept CRD file lists** (release install manifest, `bundle.yaml`, chart `crds/`): the generator only keeps `CustomResourceDefinition`s, and new CRDs then appear without edits.
 - **Never hand-edit generated output.** `gen/` is local and gitignored; the `*-libsonnet` repos are written only by the publish step. Fix the source (`libs/<name>/`, `jsonnet/`, `pkg/`) and regenerate.
 - **Verify the API group before adding or changing a lib.** `prefix` is the reversed `spec.group` of the CRDs; same-named upstream projects can ship different groups.

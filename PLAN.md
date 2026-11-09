@@ -8,8 +8,8 @@ Hard fork of [jsonnet-libs/k8s](https://github.com/jsonnet-libs/k8s) that keeps 
 |---|---|
 | Home | Org `jsonnet-libs-auto`; this repo is `generator`; outputs are `jsonnet-libs-auto/<name>-libsonnet`. |
 | Upstream relationship | Hard fork of upstream `7fede503` (2026-10-20). Restructure freely; port upstream generator fixes by hand when useful. |
-| Scope | The 14 libs the lab uses. Upstream's other `libs/` dirs stay unmanaged until they get an `upstream.json`. |
-| Version policy | Per lib: newest **5** minors, each at its latest patch. `policy.keep` pins extra minors consumers import; `policy.since` sets a floor. |
+| Scope | An initial set of 14 widely used libs. Upstream's other `libs/` dirs stay unmanaged until they get an `upstream.json`. |
+| Version policy | Per lib: newest **5** minors, each at its latest patch. `policy.keep` retains upstream-supported minors outside the window (none used yet); `policy.since` sets a floor. |
 | Output dirs | Always `major.minor` (jsonnet-libs mixed in full versions such as `1.27.0` and `v1.7.1`), so patch bumps keep import paths stable. |
 | Version source | `git ls-remote` tags: no token, no API quota. A `helm-chart` source kind (chart tag → `appVersion`) exists but is unused. |
 | CRD source | Prefer one upstream bundle per release over hand-kept file lists. |
@@ -41,7 +41,7 @@ The agent enters only through a `needs-agent` issue or a failing CI run, using `
 
 ### 2. `upstream.json`
 - [x] `cmd/libctl` (`list`, `discover`, `bump`) with tests.
-- [x] Convert the 14 lab libs. Kinds match jsonnet-libs for every overlapping minor; traefik drops `hub.traefik.io` kinds by design.
+- [x] Convert the initial 14 libs. Kinds match jsonnet-libs for every overlapping minor; traefik drops `hub.traefik.io` kinds by design.
 - [x] Fix the cloudnative-pg `main` bug (now uses the release manifest).
 - [x] k8s builds from release tags, not branches.
 
@@ -51,7 +51,7 @@ The agent enters only through a `needs-agent` issue or a failing CI run, using `
 - [ ] **Human:** `terraform apply` in `tf/` (needs a token with org repo admin).
 - [ ] **Human:** in repo settings, allow auto-merge and require the `ci` checks on `main`, so auto-bump PRs merge only when green.
 - [ ] First publish: rerun `ci` on `main` once the App and repos exist.
-- [ ] Migrate the lab: swap `tk/jsonnetfile.json` remotes, rewrite imports (`github.com/jsonnet-libs/` → `github.com/jsonnet-libs-auto/`, full-version dirs → `major.minor`), `make vendor`; review the `k8s_generated/` diff (patch-level bumps are expected now).
+- [ ] Document migrating from jsonnet-libs in `README.md`: import path `github.com/jsonnet-libs/` → `github.com/jsonnet-libs-auto/`, full-version dirs (`1.27.0`, `v1.7.1`) → `major.minor`.
 
 ### 4. Scripts and tests
 - [x] `libctl verify` with tests; `scripts/publish.sh` split from generation.

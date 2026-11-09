@@ -47,5 +47,5 @@ Rerun all three steps for the lib until `verify` passes. When the fix touches sh
 ## Stop and ask a human when
 
 - The upstream project was archived, or its CRDs moved to a different API group.
-- Fixing it needs a policy change (`minors`, `keep`, `since`) or dropping a version that `policy.keep` pins.
+- Fixing it needs a policy change (`minors`, `keep`, `since`) or dropping a minor that is still inside the window.
 - Verify reports kinds removed within a published minor and the source is correct.
