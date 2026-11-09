@@ -55,6 +55,13 @@ func TestSelectKeepsPinnedMinors(t *testing.T) {
 	assert.Equal(t, []string{"0.16", "0.13"}, outputs(got))
 }
 
+func TestSelectSinceExcludesOlderMinors(t *testing.T) {
+	r := &fakeRemote{tags: []string{"v0.12.1", "v0.13.0", "v0.13.12", "v0.14.9"}}
+	cands, err := Candidates(context.Background(), r, vTags, Policy{Minors: 5})
+	require.NoError(t, err)
+	assert.Equal(t, []string{"0.14", "0.13"}, outputs(Select(cands, Policy{Minors: 5, Since: "0.13"})))
+}
+
 func TestSelectAcrossMajors(t *testing.T) {
 	r := &fakeRemote{tags: []string{"v2.11.2", "v3.0.0", "v3.1.4", "v10.0.0"}}
 	cands, err := Candidates(context.Background(), r, vTags, Policy{Minors: 3})
@@ -147,6 +154,7 @@ func TestReadRejectsUnknownFieldsAndBadPolicy(t *testing.T) {
 		"unknown field": `{"enabled":true,"source":{"kind":"git-tags","repo":"r","tagPattern":"^v(\\d+)\\.(\\d+)\\.(\\d+)$"},"policy":{"minors":1},"versions":[],"extra":1}`,
 		"no minors":     `{"enabled":true,"source":{"kind":"git-tags","repo":"r","tagPattern":"^v(\\d+)\\.(\\d+)\\.(\\d+)$"},"policy":{"minors":0},"versions":[]}`,
 		"few groups":    `{"enabled":true,"source":{"kind":"git-tags","repo":"r","tagPattern":"^v(\\d+)$"},"policy":{"minors":1},"versions":[]}`,
+		"bad since":     `{"enabled":true,"source":{"kind":"git-tags","repo":"r","tagPattern":"^v(\\d+)\\.(\\d+)\\.(\\d+)$"},"policy":{"minors":1,"since":"v1"},"versions":[]}`,
 		"helm no path":  `{"enabled":true,"source":{"kind":"helm-chart","repo":"r","tagPattern":"^v(\\d+)\\.(\\d+)\\.(\\d+)$"},"policy":{"minors":1},"versions":[]}`,
 	} {
 		t.Run(name, func(t *testing.T) {

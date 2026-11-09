@@ -45,6 +45,9 @@ type Policy struct {
 	// Keep lists extra outputs ("X.Y") that stay tracked when they fall out
 	// of Minors, for consumers pinned to an older minor.
 	Keep []string `json:"keep,omitempty"`
+	// Since ("X.Y") excludes older minors, e.g. releases that predate the
+	// project's CRDs.
+	Since string `json:"since,omitempty"`
 }
 
 type Version struct {
@@ -99,6 +102,11 @@ func (u *Upstream) Validate() error {
 	}
 	if u.Policy.Minors < 1 {
 		return fmt.Errorf("policy.minors must be >= 1")
+	}
+	for _, m := range append([]string{u.Policy.Since}, u.Policy.Keep...) {
+		if _, ok := parseMinor(m); m != "" && !ok {
+			return fmt.Errorf("policy: %q is not a major.minor version", m)
+		}
 	}
 	return nil
 }

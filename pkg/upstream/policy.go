@@ -35,6 +35,11 @@ type Candidate struct {
 
 var semverRe = regexp.MustCompile(`^v?(\d+)\.(\d+)\.(\d+)$`)
 
+// parseMinor parses "X.Y" as X.Y.0.
+func parseMinor(s string) (Semver, bool) {
+	return ParseSemver(s + ".0")
+}
+
 // ParseSemver parses a plain "1.2.3" or "v1.2.3"; pre-releases are rejected.
 func ParseSemver(s string) (Semver, bool) {
 	return parseWith(semverRe, s)
@@ -70,8 +75,13 @@ func parseWith(re *regexp.Regexp, s string) (Semver, bool) {
 // Select applies policy to candidates: the latest patch of the newest
 // policy.Minors minors, plus any policy.Keep minors. Newest first.
 func Select(cands []Candidate, policy Policy) []Version {
+	since, hasSince := parseMinor(policy.Since)
+
 	best := map[string]Candidate{}
 	for _, c := range cands {
+		if hasSince && c.Version.Less(since) {
+			continue
+		}
 		key := c.Version.MinorString()
 		cur, ok := best[key]
 		if !ok || cur.Version.Less(c.Version) || (cur.Version == c.Version && cur.Rank.Less(c.Rank)) {
